@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MasandazaCleaning" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryVariant">#1976D2</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/red_accent</item>
+        <item name="colorSecondaryVariant">#D32F2F</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/white</item>
+        <item name="android:colorBackground">@color/white</item>
+    </style>
+
+    <!-- Dashboard Tile Styles -->
+    <style name="DashboardTileStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="DashboardTileContentStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="DashboardTileTitleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+</resources>
