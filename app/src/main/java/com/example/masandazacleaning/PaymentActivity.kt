@@ -20,6 +20,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * PaymentActivity handles the financial transactions for bookings.
+ * Users can select an unpaid booking, enter an amount, and process a payment.
+ */
 class PaymentActivity : AppCompatActivity() {
     private var selectedBooking: Booking? = null
     private var bookingsList: List<Booking> = emptyList()
@@ -28,6 +32,7 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
+        // Initialize UI components
         val spinnerBooking = findViewById<Spinner>(R.id.spinnerBooking)
         val etAmount = findViewById<EditText>(R.id.etPaymentAmount)
         val spinnerMethod = findViewById<Spinner>(R.id.spinnerPaymentMethod)
@@ -38,9 +43,11 @@ class PaymentActivity : AppCompatActivity() {
         val db = AppDatabase.getDatabase(this)
         val userId = sessionManager.getUserId()
 
+        // Populate Payment Method spinner with static options
         val paymentMethods = arrayOf("Credit Card", "Debit Card", "EFT", "Cash")
         spinnerMethod.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, paymentMethods)
 
+        // Fetch unpaid bookings for the logged-in user
         lifecycleScope.launch {
             bookingsList = db.bookingDao().getBookingsForUser(userId).filter { it.status != "Completed" }
             if (bookingsList.isEmpty()) {
@@ -48,12 +55,14 @@ class PaymentActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter(this@PaymentActivity, android.R.layout.simple_spinner_dropdown_item, arrayOf("No pending bookings"))
                 spinnerBooking.adapter = adapter
             } else {
+                // Format booking display info for the spinner
                 val bookingInfo = bookingsList.map { "${it.serviceType} - R${String.format(Locale.getDefault(), "%.2f", it.price)}" }
                 val adapter = ArrayAdapter(this@PaymentActivity, android.R.layout.simple_spinner_dropdown_item, bookingInfo)
                 spinnerBooking.adapter = adapter
             }
         }
 
+        // Listener to auto-fill payment amount when a booking is selected
         spinnerBooking.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (bookingsList.isNotEmpty()) {
@@ -64,10 +73,12 @@ class PaymentActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+        // Payment submission logic
         btnPayNow.setOnClickListener {
             val amountStr = etAmount.text.toString().trim()
             val method = spinnerMethod.selectedItem.toString()
 
+            // Basic validation
             if (selectedBooking == null) {
                 Toast.makeText(this, "Please select a booking", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -86,6 +97,7 @@ class PaymentActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
+                    // Record payment details
                     val currentDate = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date())
                     val payment = Payment(
                         userId = userId,
@@ -95,7 +107,7 @@ class PaymentActivity : AppCompatActivity() {
                     )
                     db.paymentDao().insertPayment(payment)
                     
-                    // Mark booking as complete after payment
+                    // AUTOMATION: Mark booking as complete immediately after payment record is created
                     selectedBooking?.let {
                         val completedBooking = it.copy(status = "Completed")
                         db.bookingDao().updateBookingStatus(completedBooking)
@@ -109,6 +121,7 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
 
+        // Set up Bottom Navigation bar
         bottomNavigation.selectedItemId = R.id.nav_payments
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {

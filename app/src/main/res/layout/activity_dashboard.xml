@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dashboard screen for Masandaza Cleaning app.
+    Uses ConstraintLayout for high-performance, flat view hierarchy.
+    This layout dynamically toggles sections based on whether the user is a Customer or Staff.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FE">
 
-    <!-- Header Section -->
+    <!-- Blue header background decorative element -->
     <View
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
@@ -13,6 +18,7 @@
         android:background="@color/blue_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Top Header Bar with Logo and Logout -->
     <LinearLayout
         android:id="@+id/llHeader"
         android:layout_width="match_parent"
@@ -51,6 +57,7 @@
             android:background="?android:attr/selectableItemBackground" />
     </LinearLayout>
 
+    <!-- Welcome Message Section -->
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
@@ -74,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvWelcome"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Stats Card -->
+    <!-- Statistics Quick-View (Visible to Customers only) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardStats"
         android:layout_width="match_parent"
@@ -90,6 +97,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
+            <!-- Active Bookings Counter -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -112,12 +120,14 @@
                     android:textColor="@color/gray_text" />
             </LinearLayout>
 
+            <!-- Divider -->
             <View
                 android:layout_width="1dp"
                 android:layout_height="40dp"
                 android:background="#EEEEEE"
                 android:layout_gravity="center_vertical" />
 
+            <!-- Pending Payments Counter -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -142,7 +152,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Main Content -->
+    <!-- Scrollable content area for Dashboard Tiles -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -156,6 +166,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- CUSTOMER SERVICES SECTION (Book service, Track, Payments) -->
             <LinearLayout
                 android:id="@+id/llServicesSection"
                 android:layout_width="match_parent"
@@ -178,7 +189,6 @@
                     android:alignmentMode="alignMargins"
                     android:columnOrderPreserved="false">
 
-                    <!-- Tile Helper Design -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardBookService"
                         style="@style/DashboardTileStyle">
@@ -249,7 +259,7 @@
                 </GridLayout>
             </LinearLayout>
 
-            <!-- Staff Section -->
+            <!-- STAFF MANAGEMENT SECTION (Visible to Staff only) -->
             <LinearLayout
                 android:id="@+id/llStaffSection"
                 android:layout_width="match_parent"
@@ -329,7 +339,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
+    <!-- Navigation Hub -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

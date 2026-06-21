@@ -12,11 +12,16 @@ import com.example.masandazacleaning.database.AppDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
+/**
+ * DashboardActivity is the main hub for both Customers and Staff.
+ * It dynamically adjusts its content based on the logged-in user's role.
+ */
 class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
+        // UI Component references
         val btnLogout = findViewById<TextView>(R.id.btnLogout)
         val tvWelcome = findViewById<TextView>(R.id.tvWelcome)
         val cardBookService = findViewById<CardView>(R.id.cardBookService)
@@ -36,29 +41,32 @@ class DashboardActivity : AppCompatActivity() {
         val sessionManager = SessionManager(this)
         val db = AppDatabase.getDatabase(this)
 
+        // Ensure user is authenticated before showing the dashboard
         if (!sessionManager.isLoggedIn()) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
         }
 
+        // Set personalized welcome message
         val userName = sessionManager.getUserName() ?: "User"
         tvWelcome.text = "Welcome Back, $userName! 👋"
 
         val userId = sessionManager.getUserId()
         val userRole = sessionManager.getUserRole()
 
-        // Hide/Show sections based on role
+        // ROLE-BASED UI LOGIC
+        // Staff see management tools, Customers see service options
         if (userRole == "staff") {
             llStaffSection.visibility = View.VISIBLE
             llServicesSection.visibility = View.GONE
-            cardStats.visibility = View.GONE // Stats are for customers
+            cardStats.visibility = View.GONE // Stats are currently customer-focused
         } else {
             llStaffSection.visibility = View.GONE
             llServicesSection.visibility = View.VISIBLE
             cardStats.visibility = View.VISIBLE
             
-            // Load stats only for customers
+            // Load customer statistics: Active Bookings and Pending Payments
             lifecycleScope.launch {
                 try {
                     val userBookings = db.bookingDao().getBookingsForUser(userId)
@@ -78,11 +86,12 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
 
-        // Navigation setup
+        // Bottom Navigation Event Handling
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> true
+                R.id.nav_home -> true // Already on home
                 R.id.nav_bookings -> {
+                    // Redirect based on role when clicking the bookings tab
                     if (userRole == "staff") {
                         startActivity(Intent(this, StaffDashboardActivity::class.java))
                     } else {
@@ -102,7 +111,7 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
 
-        // Logout listener
+        // Logout functionality
         btnLogout.setOnClickListener {
             sessionManager.logout()
             val intent = Intent(this, MainActivity::class.java)
@@ -111,7 +120,7 @@ class DashboardActivity : AppCompatActivity() {
             finish()
         }
 
-        // Tile click listeners
+        // DASHBOARD TILE CLICK LISTENERS
         cardBookService.setOnClickListener {
             startActivity(Intent(this, BookServiceActivity::class.java))
         }
